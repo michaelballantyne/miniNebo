@@ -24,11 +24,72 @@ struct Grid {
     }
 };
 
+
+
+template<typename ValueType>
+class GenericFieldType {
+    typedef ValueType value_type;
+};
+
+// Need something that only compiles if value types match, but returns the (non-generic) field type
+template<typename ValueType1, typename ValueType2, typename FieldType>
+struct ValueTypeCheck;
+
+template<typename ValueType, typename FieldType>
+struct ValueTypeCheck<ValueType, ValueType, FieldType> {
+    FieldType typedef Result;
+};
+
+template<typename FieldType1, typename FieldType2>
+struct RefineFieldType;
+
+// Covers Generic + Generic (if matching value_types) and Type + Type
+template<typename FieldType>
+struct RefineFieldType<FieldType, FieldType>
+{
+    FieldType typedef Result;
+};
+
+template<typename ValueType>
+struct RefineFieldType<GenericFieldType<ValueType>, GenericFieldType<ValueType> > {
+    GenericFieldType<ValueType> typedef Result;
+};
+
+template<typename FieldType, typename ValueType>
+struct RefineFieldType<GenericFieldType<ValueType>, FieldType> {
+    typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
+};
+
+template<typename FieldType, typename ValueType>
+struct RefineFieldType<FieldType, GenericFieldType<ValueType> > {
+    typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
+};
+
+template<typename SubExpr, typename FieldType>
+struct ExprTypeCheck {
+    typename RefineFieldType<typename SubExpr::field_type, FieldType>::Result typedef Result;
+};
+
+struct SVol {
+    double typedef value_type;
+};
+
+struct SSurfX {
+    double typedef value_type;
+};
+
+struct SSurfY {
+    double typedef value_type;
+};
+
+template<typename FieldType>
 class Field {
     private:
         double* array;
 
     public:
+        FieldType typedef field_type;
+
         const Grid dim;
 
         Field(const Grid dimArg)
@@ -51,6 +112,8 @@ class Field {
 
         template<typename Expr>
         void operator<<= (const Expr & rhs) {
+            typename ExprTypeCheck<Expr, FieldType>::Result typedef check;
+
             for (int k = 0; k < dim.z; k++) {
                 for (int j = 0; j < dim.y; j++) {
                     for (int i = 0; i < dim.x; i++) {
@@ -69,6 +132,8 @@ class BinExpr {
         const Functor functor;
 
     public:
+        typename RefineFieldType<typename SubExpr1::field_type, typename SubExpr2::field_type>::Result typedef field_type;
+
         BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
             : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}
 
@@ -78,6 +143,8 @@ class BinExpr {
 };
 
 struct ConstExpr {
+    GenericFieldType<double> typedef field_type;
+
     double value;
 
     ConstExpr(double valueArg) : value(valueArg) {}
@@ -91,8 +158,8 @@ ConstExpr constExpr(double valueArg) {
     return ConstExpr(valueArg);
 }
 
-template<typename Reduction>
-double reduce(const Field & field) {
+template<typename Reduction, typename FieldType>
+double reduce(const Field<FieldType> & field) {
     Reduction reduction;
 
     double acc = reduction.initial;
@@ -108,7 +175,8 @@ double reduce(const Field & field) {
     return acc;
 }
 
-std::ostream & operator<<(std::ostream & os, const Field & field)
+template<typename FieldType>
+std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
 {
     for (int z = 0; z < field.dim.z; z++) {
         os << "z = " << z << std::endl;
@@ -171,6 +239,8 @@ class GradX {
         const SubExpr & subExpr;
 
     public:
+        SSurfX typedef field_type;
+
         GradX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -185,6 +255,8 @@ class GradX {
 
 template<typename SubExpr>
 GradX<SubExpr> gradX(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+
     return GradX<SubExpr>(subExprArg);
 }
 
@@ -194,6 +266,8 @@ class DivX {
         const SubExpr & subExpr;
 
     public:
+        SVol typedef field_type;
+
         DivX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -208,6 +282,8 @@ class DivX {
 
 template<typename SubExpr>
 DivX<SubExpr> divX(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SSurfX>::Result typedef check;
+
     return DivX<SubExpr>(subExprArg);
 }
 
@@ -217,6 +293,8 @@ class InterpX {
         const SubExpr & subExpr;
 
     public:
+        SSurfX typedef field_type;
+
         InterpX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -231,6 +309,8 @@ class InterpX {
 
 template<typename SubExpr>
 InterpX<SubExpr> interpX(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+
     return InterpX<SubExpr>(subExprArg);
 }
 
@@ -243,6 +323,8 @@ class GradY {
         const SubExpr & subExpr;
 
     public:
+        SSurfY typedef field_type;
+
         GradY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -257,6 +339,8 @@ class GradY {
 
 template<typename SubExpr>
 GradY<SubExpr> gradY(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+
     return GradY<SubExpr>(subExprArg);
 }
 
@@ -266,6 +350,8 @@ class DivY {
         const SubExpr & subExpr;
 
     public:
+        SVol typedef field_type;
+
         DivY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -280,6 +366,8 @@ class DivY {
 
 template<typename SubExpr>
 DivY<SubExpr> divY(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SSurfY>::Result typedef check;
+
     return DivY<SubExpr>(subExprArg);
 }
 
@@ -289,6 +377,8 @@ class InterpY {
         const SubExpr & subExpr;
 
     public:
+        SSurfY typedef field_type;
+
         InterpY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -303,5 +393,7 @@ class InterpY {
 
 template<typename SubExpr>
 InterpY<SubExpr> interpY(const SubExpr & subExprArg) {
+    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+
     return InterpY<SubExpr>(subExprArg);
 }
