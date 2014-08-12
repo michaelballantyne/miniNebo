@@ -1,4 +1,7 @@
+#include<iostream>
+
 #include "MiniNebo.h"
+#include "MiniNeboSingleValueFields.h"
 
 int main(int argc, const char *argv[])
 {

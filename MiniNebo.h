@@ -1,6 +1,8 @@
 #include<cfloat>
 #include <iostream>
 
+// Grid
+
 struct Grid {
     const int x;
     const int y;
@@ -26,7 +28,6 @@ struct Grid {
 
 
 // Generic field type magic
-
 
 template<typename ValueType>
 class GenericFieldType {
@@ -78,15 +79,6 @@ struct ExprTypeCheck {
 struct SVol {
     double typedef value_type;
 };
-
-struct SSurfX {
-    double typedef value_type;
-};
-
-struct SSurfY {
-    double typedef value_type;
-};
-
 
 
 // Constant expressions
@@ -145,33 +137,25 @@ class Field {
 
 };
 
-template<typename ValueType>
-class Field<GenericFieldType<ValueType> > {
-    private:
-        double value;
 
-    public:
-        const Grid dim;
+// Printing Fields to std::cout
 
-        GenericFieldType<ValueType> typedef field_type;
-
-        Field() : value(0), dim(1, 1, 1, 1) {}
-        Field(double valueArg) : value(valueArg), dim(1, 1, 1, 1) {}
-
-        double & operator() (int x, int y, int z) {
-            return value;
+template<typename FieldType>
+std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
+{
+    for (int z = 0; z < field.dim.z; z++) {
+        os << "z = " << z << std::endl;
+        for (int y = 0; y < field.dim.y; y++) {
+            for (int x = 0; x < field.dim.x; x++) {
+                os << field(x, y, z) << " ";
+            }
+            os << std::endl;
         }
+        os << std::endl;
+    }
 
-        double operator() (int x, int y, int z) const {
-            return value;
-        }
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            return (*this)(x, y, z);
-        }
-};
-
-Field<GenericFieldType<double> > typedef SingleValueField;
+    return os;
+}
 
 
 // Assignments
@@ -216,45 +200,6 @@ class BinExpr {
 };
 
 
-// Reduction function
-
-template<typename Reduction, typename FieldType>
-double reduce(const Field<FieldType> & field) {
-    Reduction reduction;
-
-    double acc = reduction.initial;
-
-    for (int i = 0; i < field.dim.x; i++) {
-        for (int j = 0; j < field.dim.y; j++) {
-            for (int k = 0; k < field.dim.z; k++) {
-                acc = reduction(field(i, j, k), acc);
-            }
-        }
-    }
-
-    return acc;
-}
-
-// Printing Fields to std::cout
-
-template<typename FieldType>
-std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
-{
-    for (int z = 0; z < field.dim.z; z++) {
-        os << "z = " << z << std::endl;
-        for (int y = 0; y < field.dim.y; y++) {
-            for (int x = 0; x < field.dim.x; x++) {
-                os << field(x, y, z) << " ";
-            }
-            os << std::endl;
-        }
-        os << std::endl;
-    }
-
-    return os;
-}
-
-
 // Wrap function
 
 const ConstExpr wrap(double valueArg) {
@@ -271,7 +216,7 @@ const Expr & wrap(const Expr & arg) {
 }
 
 
-// wrap return type metafunction
+// Wrap return type metafunction
 
 template<typename Expr>
 struct WrapReturn {
@@ -290,8 +235,6 @@ struct WrapReturn<int> {
 
 
 // Particular operators
-
-// Binary
 
 struct SumOp {
     double operator() (double lhs, double rhs) const {
@@ -314,187 +257,3 @@ template<typename Arg1, typename Arg2>
 BinExpr<MultOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result> operator*(const Arg1 & arg1, const Arg2 & arg2) {
     return BinExpr<MultOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result>(wrap(arg1), wrap(arg2));
 }
-
-// Reduction
-
-struct Min {
-    static const double initial;
-
-    double operator() (double el, double acc) {
-        return el < acc ? el : acc;
-    }
-};
-
-const double Min::initial = DBL_MAX;
-
-
-
-// Stencils
-
-// X
-
-template<typename SubExpr>
-class GradX {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SSurfX typedef field_type;
-
-        GradX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (x == 0) {
-                return 0;
-            } else {
-                return -subExpr.eval(x - 1, y, z, fieldDim) / fieldDim.x_spacing() +
-                        subExpr.eval(x    , y, z, fieldDim) / fieldDim.x_spacing();
-            }
-        }
-};
-
-template<typename SubExpr>
-GradX<SubExpr> gradX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
-
-    return GradX<SubExpr>(subExprArg);
-}
-
-template<typename SubExpr>
-class DivX {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SVol typedef field_type;
-
-        DivX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (x == fieldDim.x - 1) {
-                return 0;
-            } else {
-                return -subExpr.eval(x    , y, z, fieldDim) / fieldDim.x_spacing() +
-                        subExpr.eval(x + 1, y, z, fieldDim) / fieldDim.x_spacing();
-            }
-        }
-};
-
-template<typename SubExpr>
-DivX<SubExpr> divX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SSurfX>::Result typedef check;
-
-    return DivX<SubExpr>(subExprArg);
-}
-
-template<typename SubExpr>
-class InterpX {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SSurfX typedef field_type;
-
-        InterpX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (x == 0) {
-                return 0;
-            } else {
-                return subExpr.eval(x - 1, y, z, fieldDim) / 2 +
-                       subExpr.eval(x    , y, z, fieldDim) / 2;
-            }
-        }
-};
-
-template<typename SubExpr>
-InterpX<SubExpr> interpX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
-
-    return InterpX<SubExpr>(subExprArg);
-}
-
-
-// Y
-
-template<typename SubExpr>
-class GradY {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SSurfY typedef field_type;
-
-        GradY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (y == 0) {
-                return 0;
-            } else {
-                return -subExpr.eval(x, y - 1, z, fieldDim) / fieldDim.y_spacing() +
-                        subExpr.eval(x, y    , z, fieldDim) / fieldDim.y_spacing();
-            }
-        }
-};
-
-template<typename SubExpr>
-GradY<SubExpr> gradY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
-
-    return GradY<SubExpr>(subExprArg);
-}
-
-template<typename SubExpr>
-class DivY {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SVol typedef field_type;
-
-        DivY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (y == fieldDim.y - 1) {
-                return 0;
-            } else {
-                return -subExpr.eval(x, y    , z, fieldDim) / fieldDim.y_spacing() +
-                        subExpr.eval(x, y + 1, z, fieldDim) / fieldDim.y_spacing();
-            }
-        }
-};
-
-template<typename SubExpr>
-DivY<SubExpr> divY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SSurfY>::Result typedef check;
-
-    return DivY<SubExpr>(subExprArg);
-}
-
-template<typename SubExpr>
-class InterpY {
-    private:
-        const SubExpr & subExpr;
-
-    public:
-        SSurfY typedef field_type;
-
-        InterpY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
-
-        double eval(int x, int y, int z, const Grid fieldDim) const {
-            if (y == 0) {
-                return 0;
-            } else {
-                return subExpr.eval(x, y - 1, z, fieldDim) / 2 +
-                       subExpr.eval(x, y    , z, fieldDim) / 2;
-            }
-        }
-};
-
-template<typename SubExpr>
-InterpY<SubExpr> interpY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
-
-    return InterpY<SubExpr>(subExprArg);
-}
-

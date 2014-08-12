@@ -2,6 +2,8 @@
 #include<iostream>
 
 #include "MiniNebo.h"
+#include "MiniNeboStencils.h"
+#include "MiniNeboReductions.h"
 
 
 struct InitialAlpha {
