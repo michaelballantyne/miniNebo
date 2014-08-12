@@ -88,7 +88,27 @@ struct SSurfY {
 };
 
 
-// Field
+
+// Constant expressions
+
+struct ConstExpr {
+    GenericFieldType<double> typedef field_type;
+
+    const double value;
+
+    ConstExpr(const double valueArg) : value(valueArg) {}
+
+    double eval(int x, int y, int z, const Grid fieldDim) const {
+        return value;
+    }
+};
+
+ConstExpr constExpr(double valueArg) {
+    return ConstExpr(valueArg);
+}
+
+
+// Fields
 
 template<typename FieldType>
 class Field {
@@ -115,7 +135,11 @@ class Field {
         Field(const Grid dimArg)
             : dim(dimArg), data(new FieldMemory(dimArg.x, dimArg.y, dimArg.z)) {}
 
-        double & operator() (int x, int y, int z) const {
+        double & operator() (int x, int y, int z) {
+            return (*data).array[z * dim.y + y * dim.x + x];
+        }
+
+        double operator() (int x, int y, int z) const {
             return (*data).array[z * dim.y + y * dim.x + x];
         }
 
@@ -123,19 +147,56 @@ class Field {
             return (*this)(x, y, z);
         }
 
-        template<typename Expr>
-        void operator<<= (const Expr & rhs) {
-            typename ExprTypeCheck<Expr, FieldType>::Result typedef check;
+};
 
-            for (int k = 0; k < dim.z; k++) {
-                for (int j = 0; j < dim.y; j++) {
-                    for (int i = 0; i < dim.x; i++) {
-                        (*this)(i, j, k) = rhs.eval(i, j, k, dim);
-                    }
-                }
-            }
+template<typename ValueType>
+class Field<GenericFieldType<ValueType> > {
+    private:
+        double value;
+
+    public:
+        const Grid dim;
+
+        GenericFieldType<ValueType> typedef field_type;
+
+        Field() : value(0), dim(1, 1, 1, 1) {}
+        Field(double valueArg) : value(valueArg), dim(1, 1, 1, 1) {}
+
+        double & operator() (int x, int y, int z) {
+            return value;
+        }
+
+        double operator() (int x, int y, int z) const {
+            return value;
+        }
+
+        double eval(int x, int y, int z, const Grid fieldDim) const {
+            return (*this)(x, y, z);
         }
 };
+
+Field<GenericFieldType<double> > typedef SingleValueField;
+
+
+// Assignments
+
+template<typename FieldType, typename Expr>
+void operator<<=(Field<FieldType> & field, const Expr & rhs) {
+    typename ExprTypeCheck<Expr, FieldType>::Result typedef check;
+
+    for (int k = 0; k <  field.dim.z; k++) {
+        for (int j = 0; j < field.dim.y; j++) {
+            for (int i = 0; i < field.dim.x; i++) {
+                field(i, j, k) = rhs.eval(i, j, k, field.dim);
+            }
+        }
+    }
+}
+
+template<typename FieldType>
+void operator<<=(Field<FieldType> & field, const double rhs) {
+    field <<= ConstExpr(rhs);
+}
 
 
 // Binary expressions
@@ -159,23 +220,6 @@ class BinExpr {
 };
 
 
-// Constant expressions
-
-struct ConstExpr {
-    GenericFieldType<double> typedef field_type;
-
-    const double value;
-
-    ConstExpr(const double valueArg) : value(valueArg) {}
-
-    double eval(int x, int y, int z, const Grid fieldDim) const {
-        return value;
-    }
-};
-
-ConstExpr constExpr(double valueArg) {
-    return ConstExpr(valueArg);
-}
 
 // Reduction function
 
