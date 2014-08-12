@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
 
     alpha <<= InitialAlpha();
 
-    phi <<= phiBoundaryConditions(constExpr(5.0));
+    phi <<= phiBoundaryConditions(wrap(5.0));
 
     double deltaT = find_deltaT(alpha, grid);
 
