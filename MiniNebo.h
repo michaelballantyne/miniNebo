@@ -103,10 +103,6 @@ struct ConstExpr {
     }
 };
 
-ConstExpr constExpr(double valueArg) {
-    return ConstExpr(valueArg);
-}
-
 
 // Fields
 
@@ -220,7 +216,6 @@ class BinExpr {
 };
 
 
-
 // Reduction function
 
 template<typename Reduction, typename FieldType>
@@ -260,31 +255,19 @@ std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
 }
 
 
-// binExpr function specializations
+// Wrap function
 
-template<typename Op, typename SubExpr1, typename SubExpr2>
-BinExpr<Op, SubExpr1, SubExpr2> binExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg) {
-    return BinExpr<Op, SubExpr1, SubExpr2>(subExpr1Arg, subExpr2Arg);
+const ConstExpr constExpr(double valueArg) {
+    return ConstExpr(valueArg);
 }
 
-template<typename Op, typename SubExpr>
-BinExpr<Op, SubExpr, ConstExpr> binExpr(const SubExpr & subExprArg, double scalarArg) {
-    return BinExpr<Op, SubExpr, ConstExpr>(subExprArg, ConstExpr(scalarArg));
+const ConstExpr constExpr(int valueArg) {
+    return ConstExpr(valueArg);
 }
 
-template<typename Op, typename SubExpr>
-BinExpr<Op, ConstExpr, SubExpr> binExpr(double scalarArg, const SubExpr & subExprArg) {
-    return BinExpr<Op, ConstExpr, SubExpr>(ConstExpr(scalarArg), subExprArg);
-}
-
-template<typename Op, typename SubExpr>
-BinExpr<Op, SubExpr, ConstExpr> binExpr(const SubExpr & subExprArg, int scalarArg) {
-    return BinExpr<Op, SubExpr, ConstExpr>(subExprArg, ConstExpr(scalarArg));
-}
-
-template<typename Op, typename SubExpr>
-BinExpr<Op, ConstExpr, SubExpr> binExpr(int scalarArg, const SubExpr & subExprArg) {
-    return BinExpr<Op, ConstExpr, SubExpr>(ConstExpr(scalarArg), subExprArg);
+template<typename Expr>
+const Expr & constExpr(const Expr & arg) {
+    return arg;
 }
 
 
@@ -328,7 +311,7 @@ struct SumOp {
 
 template<typename Arg1, typename Arg2>
 typename BinExprReturn<SumOp, Arg1, Arg2>::Result operator+(const Arg1 & arg1, const Arg2 & arg2) {
-    return binExpr<SumOp>(arg1, arg2);
+    return typename BinExprReturn<SumOp, Arg1, Arg2>::Result(constExpr(arg1), constExpr(arg2));
 }
 
 struct MultOp {
@@ -339,7 +322,7 @@ struct MultOp {
 
 template<typename Arg1, typename Arg2>
 typename BinExprReturn<MultOp, Arg1, Arg2>::Result operator*(const Arg1 & arg1, const Arg2 & arg2) {
-    return binExpr<MultOp>(arg1, arg2);
+    return typename BinExprReturn<MultOp, Arg1, Arg2>::Result(constExpr(arg1), constExpr(arg2));
 }
 
 // Reduction
