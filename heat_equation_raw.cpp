@@ -79,10 +79,10 @@ int main(int argc, const char *argv[])
     const int time_steps = 40;
 
     for (int step = 1; step <= time_steps; step++) {
-        Q <<= sum(divX(mult(interpX(alpha), gradX(phi))),
-                  divY(mult(interpY(alpha), gradY(phi))));
+        Q <<= divX(interpX(alpha) * gradX(phi)) +
+              divY(interpY(alpha) * gradY(phi));
 
-        phi <<= sum(phi, mult(constExpr(deltaT), Q));
+        phi <<= phi + deltaT * Q;
 
         phi <<= phiBoundaryConditions(phi);
 

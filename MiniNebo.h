@@ -25,6 +25,8 @@ struct Grid {
 };
 
 
+// Generic field type magic
+
 
 template<typename ValueType>
 class GenericFieldType {
@@ -70,6 +72,9 @@ struct ExprTypeCheck {
     typename RefineFieldType<typename SubExpr::field_type, FieldType>::Result typedef Result;
 };
 
+
+// Specific types
+
 struct SVol {
     double typedef value_type;
 };
@@ -82,10 +87,25 @@ struct SSurfY {
     double typedef value_type;
 };
 
+
+// Field
+
 template<typename FieldType>
 class Field {
     private:
-        double* array;
+        struct FieldMemory {
+            double* array;
+
+            FieldMemory(const int x, const int y, const int z) {
+                array = new double[x * y * z];
+            }
+
+            ~FieldMemory() {
+                delete array;
+            }
+        };
+
+        std::shared_ptr<FieldMemory> data;
 
     public:
         FieldType typedef field_type;
@@ -93,17 +113,10 @@ class Field {
         const Grid dim;
 
         Field(const Grid dimArg)
-            : dim(dimArg)
-        {
-            array = new double[dim.x * dim.y * dim.z];
-        }
-
-        ~Field() {
-            delete array;
-        }
+            : dim(dimArg), data(new FieldMemory(dimArg.x, dimArg.y, dimArg.z)) {}
 
         double & operator() (int x, int y, int z) const {
-            return array[z * dim.y + y * dim.x + x];
+            return (*data).array[z * dim.y + y * dim.x + x];
         }
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -124,11 +137,14 @@ class Field {
         }
 };
 
+
+// Binary expressions
+
 template<typename Functor, typename SubExpr1, typename SubExpr2>
 class BinExpr {
     private:
-        const SubExpr1 & subExpr1;
-        const SubExpr2 & subExpr2;
+        const SubExpr1 subExpr1;
+        const SubExpr2 subExpr2;
         const Functor functor;
 
     public:
@@ -142,12 +158,15 @@ class BinExpr {
         }
 };
 
+
+// Constant expressions
+
 struct ConstExpr {
     GenericFieldType<double> typedef field_type;
 
-    double value;
+    const double value;
 
-    ConstExpr(double valueArg) : value(valueArg) {}
+    ConstExpr(const double valueArg) : value(valueArg) {}
 
     double eval(int x, int y, int z, const Grid fieldDim) const {
         return value;
@@ -157,6 +176,8 @@ struct ConstExpr {
 ConstExpr constExpr(double valueArg) {
     return ConstExpr(valueArg);
 }
+
+// Reduction function
 
 template<typename Reduction, typename FieldType>
 double reduce(const Field<FieldType> & field) {
@@ -174,6 +195,8 @@ double reduce(const Field<FieldType> & field) {
 
     return acc;
 }
+
+// Printing Fields to std::cout
 
 template<typename FieldType>
 std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
@@ -193,7 +216,65 @@ std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
 }
 
 
+// binExpr function specializations
+
+template<typename Op, typename SubExpr1, typename SubExpr2>
+BinExpr<Op, SubExpr1, SubExpr2> binExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg) {
+    return BinExpr<Op, SubExpr1, SubExpr2>(subExpr1Arg, subExpr2Arg);
+}
+
+template<typename Op, typename SubExpr>
+BinExpr<Op, SubExpr, ConstExpr> binExpr(const SubExpr & subExprArg, double scalarArg) {
+    return BinExpr<Op, SubExpr, ConstExpr>(subExprArg, ConstExpr(scalarArg));
+}
+
+template<typename Op, typename SubExpr>
+BinExpr<Op, ConstExpr, SubExpr> binExpr(double scalarArg, const SubExpr & subExprArg) {
+    return BinExpr<Op, ConstExpr, SubExpr>(ConstExpr(scalarArg), subExprArg);
+}
+
+template<typename Op, typename SubExpr>
+BinExpr<Op, SubExpr, ConstExpr> binExpr(const SubExpr & subExprArg, int scalarArg) {
+    return BinExpr<Op, SubExpr, ConstExpr>(subExprArg, ConstExpr(scalarArg));
+}
+
+template<typename Op, typename SubExpr>
+BinExpr<Op, ConstExpr, SubExpr> binExpr(int scalarArg, const SubExpr & subExprArg) {
+    return BinExpr<Op, ConstExpr, SubExpr>(ConstExpr(scalarArg), subExprArg);
+}
+
+
+// binExpr return type metafunction
+
+template<typename Op, typename SubExpr1, typename SubExpr2>
+struct BinExprReturn {
+    BinExpr<Op, SubExpr1, SubExpr2> typedef Result;
+};
+
+template<typename Op, typename SubExpr>
+struct BinExprReturn<Op, SubExpr, double> {
+    BinExpr<Op, SubExpr, ConstExpr> typedef Result;
+};
+
+template<typename Op, typename SubExpr>
+struct BinExprReturn<Op, double, SubExpr> {
+    BinExpr<Op, ConstExpr, SubExpr> typedef Result;
+};
+
+template<typename Op, typename SubExpr>
+struct BinExprReturn<Op, SubExpr, int> {
+    BinExpr<Op, SubExpr, ConstExpr> typedef Result;
+};
+
+template<typename Op, typename SubExpr>
+struct BinExprReturn<Op, int, SubExpr> {
+    BinExpr<Op, ConstExpr, SubExpr> typedef Result;
+};
+
+
 // Particular operators
+
+// Binary
 
 struct SumOp {
     double operator() (double lhs, double rhs) const {
@@ -201,9 +282,9 @@ struct SumOp {
     }
 };
 
-template<typename SubExpr1, typename SubExpr2>
-BinExpr<SumOp, SubExpr1, SubExpr2> sum(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg) {
-    return BinExpr<SumOp, SubExpr1, SubExpr2>(subExpr1Arg, subExpr2Arg);
+template<typename Arg1, typename Arg2>
+typename BinExprReturn<SumOp, Arg1, Arg2>::Result operator+(const Arg1 & arg1, const Arg2 & arg2) {
+    return binExpr<SumOp>(arg1, arg2);
 }
 
 struct MultOp {
@@ -212,10 +293,12 @@ struct MultOp {
     }
 };
 
-template<typename SubExpr1, typename SubExpr2>
-BinExpr<MultOp, SubExpr1, SubExpr2> mult(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg) {
-    return BinExpr<MultOp, SubExpr1, SubExpr2>(subExpr1Arg, subExpr2Arg);
+template<typename Arg1, typename Arg2>
+typename BinExprReturn<MultOp, Arg1, Arg2>::Result operator*(const Arg1 & arg1, const Arg2 & arg2) {
+    return binExpr<MultOp>(arg1, arg2);
 }
+
+// Reduction
 
 struct Min {
     static const double initial;
@@ -228,8 +311,8 @@ struct Min {
 const double Min::initial = DBL_MAX;
 
 
-// Stencils
 
+// Stencils
 
 // X
 
@@ -397,3 +480,4 @@ InterpY<SubExpr> interpY(const SubExpr & subExprArg) {
 
     return InterpY<SubExpr>(subExprArg);
 }
+
