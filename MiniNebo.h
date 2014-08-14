@@ -27,10 +27,10 @@ struct Grid {
 };
 
 
-// Generic field type magic
+// SingleValue field type magic
 
 template<typename ValueType>
-class GenericFieldType {
+class SingleValue {
     typedef ValueType value_type;
 };
 
@@ -46,7 +46,7 @@ struct ValueTypeCheck<ValueType, ValueType, FieldType> {
 template<typename FieldType1, typename FieldType2>
 struct RefineFieldType;
 
-// Covers Generic + Generic (if matching value_types) and Type + Type
+// Covers SingleValue + SingleValue (if matching value_types) and Type + Type
 template<typename FieldType>
 struct RefineFieldType<FieldType, FieldType>
 {
@@ -54,17 +54,17 @@ struct RefineFieldType<FieldType, FieldType>
 };
 
 template<typename ValueType>
-struct RefineFieldType<GenericFieldType<ValueType>, GenericFieldType<ValueType> > {
-    GenericFieldType<ValueType> typedef Result;
+struct RefineFieldType<SingleValue<ValueType>, SingleValue<ValueType> > {
+    SingleValue<ValueType> typedef Result;
 };
 
 template<typename FieldType, typename ValueType>
-struct RefineFieldType<GenericFieldType<ValueType>, FieldType> {
+struct RefineFieldType<SingleValue<ValueType>, FieldType> {
     typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
 };
 
 template<typename FieldType, typename ValueType>
-struct RefineFieldType<FieldType, GenericFieldType<ValueType> > {
+struct RefineFieldType<FieldType, SingleValue<ValueType> > {
     typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
 };
 
@@ -84,7 +84,7 @@ struct SVol {
 // Constant expressions
 
 struct ConstExpr {
-    GenericFieldType<double> typedef field_type;
+    SingleValue<double> typedef field_type;
 
     const double value;
 
