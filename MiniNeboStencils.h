@@ -17,11 +17,12 @@ class GradX {
         const SubExpr & subExpr;
 
     public:
-        SSurfX typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SSurfX typedef location;
 
         GradX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (x == 0) {
                 return 0;
             } else {
@@ -33,7 +34,7 @@ class GradX {
 
 template<typename SubExpr>
 GradX<SubExpr> gradX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SVol>::result typedef check;
 
     return GradX<SubExpr>(subExprArg);
 }
@@ -44,11 +45,12 @@ class DivX {
         const SubExpr & subExpr;
 
     public:
-        SVol typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SVol typedef location;
 
         DivX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (x == fieldDim.x - 1) {
                 return 0;
             } else {
@@ -60,7 +62,7 @@ class DivX {
 
 template<typename SubExpr>
 DivX<SubExpr> divX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SSurfX>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SSurfX>::result typedef check;
 
     return DivX<SubExpr>(subExprArg);
 }
@@ -71,11 +73,12 @@ class InterpX {
         const SubExpr & subExpr;
 
     public:
-        SSurfX typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SSurfX typedef location;
 
         InterpX(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (x == 0) {
                 return 0;
             } else {
@@ -87,7 +90,7 @@ class InterpX {
 
 template<typename SubExpr>
 InterpX<SubExpr> interpX(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SVol>::result typedef check;
 
     return InterpX<SubExpr>(subExprArg);
 }
@@ -101,11 +104,12 @@ class GradY {
         const SubExpr & subExpr;
 
     public:
-        SSurfY typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SSurfY typedef location;
 
         GradY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (y == 0) {
                 return 0;
             } else {
@@ -117,7 +121,7 @@ class GradY {
 
 template<typename SubExpr>
 GradY<SubExpr> gradY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SVol>::result typedef check;
 
     return GradY<SubExpr>(subExprArg);
 }
@@ -128,11 +132,12 @@ class DivY {
         const SubExpr & subExpr;
 
     public:
-        SVol typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SVol typedef location;
 
         DivY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (y == fieldDim.y - 1) {
                 return 0;
             } else {
@@ -144,7 +149,7 @@ class DivY {
 
 template<typename SubExpr>
 DivY<SubExpr> divY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SSurfY>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SSurfY>::result typedef check;
 
     return DivY<SubExpr>(subExprArg);
 }
@@ -155,11 +160,12 @@ class InterpY {
         const SubExpr & subExpr;
 
     public:
-        SSurfY typedef field_type;
+        typename SubExpr::value_type typedef value_type;
+        SSurfY typedef location;
 
         InterpY(const SubExpr & subExprArg) : subExpr(subExprArg) {}
 
-        double eval(int x, int y, int z, const Grid fieldDim) const {
+        value_type eval(int x, int y, int z, const Grid fieldDim) const {
             if (y == 0) {
                 return 0;
             } else {
@@ -171,7 +177,7 @@ class InterpY {
 
 template<typename SubExpr>
 InterpY<SubExpr> interpY(const SubExpr & subExprArg) {
-    typename ExprTypeCheck<SubExpr, SVol>::Result typedef check;
+    typename CheckEqual<typename SubExpr::location, SVol>::result typedef check;
 
     return InterpY<SubExpr>(subExprArg);
 }

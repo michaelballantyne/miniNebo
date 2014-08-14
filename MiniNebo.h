@@ -59,19 +59,19 @@ struct NewLocation {
     typename RefineLocation<typename ExprType1::location, typename ExprType2::location>::result typedef result;
 };
 
-// NewValueType metafunction
+// CheckEqual metafunction
 
-template<typename ValueType1, typename ValueType2>
-struct CheckValueType;
+template<typename Type1, typename Type2>
+struct CheckEqual;
 
-template<typename ValueType>
-struct CheckValueType<ValueType, ValueType> {
-    ValueType typedef result;
+template<typename Type>
+struct CheckEqual<Type, Type> {
+    Type typedef result;
 };
 
 template<typename ExprType1, typename ExprType2>
 struct NewValueType {
-    typename CheckValueType<typename ExprType1::value_type, typename ExprType2::value_type>::result typedef result;
+    typename CheckEqual<typename ExprType1::value_type, typename ExprType2::value_type>::result typedef result;
 };
 
 

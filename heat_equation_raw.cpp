@@ -7,7 +7,8 @@
 
 
 struct InitialAlpha {
-    SVol typedef field_type;
+    SVol typedef location;
+    double typedef value_type;
 
     double eval(int x, int y, int z, const Grid fieldDim) const {
         return 1.0;
@@ -17,7 +18,8 @@ struct InitialAlpha {
 
 template<typename SubExpr>
 struct PhiBoundaryConditions {
-    SVol typedef field_type;
+    SVol typedef location;
+    double typedef value_type;
 
     const SubExpr & internalExpr;
 
@@ -47,7 +49,7 @@ PhiBoundaryConditions<SubExpr> phiBoundaryConditions(const SubExpr & internalExp
 }
 
 
-double find_deltaT(const Field<SVol> & alpha, const Grid & grid) {
+double find_deltaT(const Field<SVol, double> & alpha, const Grid & grid) {
     double sqrdDeltaX = pow(grid.x_spacing(), 2);
     double sqrdDeltaY = pow(grid.y_spacing(), 2);
 
@@ -59,9 +61,9 @@ int main(int argc, const char *argv[])
 {
     Grid grid(8, 8, 1, 1.3333333333333f);
 
-    Field<SVol> alpha(grid);
-    Field<SVol> phi(grid);
-    Field<SVol> Q(grid);
+    Field<SVol, double> alpha(grid);
+    Field<SVol, double> phi(grid);
+    Field<SVol, double> Q(grid);
 
     alpha <<= InitialAlpha();
 
