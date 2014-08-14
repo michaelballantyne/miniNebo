@@ -27,64 +27,63 @@ struct Grid {
 };
 
 
-// SingleValue field type magic
+struct SingleValue;
+
+// NewLocation metafunction
+
+template<typename Location1, typename Location2>
+struct RefineLocation;
+
+template<typename Location>
+struct RefineLocation<Location, Location> {
+    Location typedef result;
+};
+
+template<>
+struct RefineLocation<SingleValue, SingleValue> {
+    SingleValue typedef result;
+};
+
+template<typename OtherLocation>
+struct RefineLocation<SingleValue, OtherLocation> {
+    OtherLocation typedef result;
+};
+
+template<typename OtherLocation>
+struct RefineLocation<OtherLocation, SingleValue> {
+    OtherLocation typedef result;
+};
+
+template<typename ExprType1, typename ExprType2>
+struct NewLocation {
+    typename RefineLocation<typename ExprType1::location, typename ExprType2::location>::result typedef result;
+};
+
+// NewValueType metafunction
+
+template<typename ValueType1, typename ValueType2>
+struct CheckValueType;
 
 template<typename ValueType>
-class SingleValue {
-    typedef ValueType value_type;
+struct CheckValueType<ValueType, ValueType> {
+    ValueType typedef result;
 };
 
-// Need something that only compiles if value types match, but returns the (non-generic) field type
-template<typename ValueType1, typename ValueType2, typename FieldType>
-struct ValueTypeCheck;
-
-template<typename ValueType, typename FieldType>
-struct ValueTypeCheck<ValueType, ValueType, FieldType> {
-    FieldType typedef Result;
-};
-
-template<typename FieldType1, typename FieldType2>
-struct RefineFieldType;
-
-// Covers SingleValue + SingleValue (if matching value_types) and Type + Type
-template<typename FieldType>
-struct RefineFieldType<FieldType, FieldType>
-{
-    FieldType typedef Result;
-};
-
-template<typename ValueType>
-struct RefineFieldType<SingleValue<ValueType>, SingleValue<ValueType> > {
-    SingleValue<ValueType> typedef Result;
-};
-
-template<typename FieldType, typename ValueType>
-struct RefineFieldType<SingleValue<ValueType>, FieldType> {
-    typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
-};
-
-template<typename FieldType, typename ValueType>
-struct RefineFieldType<FieldType, SingleValue<ValueType> > {
-    typename ValueTypeCheck<ValueType, typename FieldType::value_type, FieldType>::Result typedef Result;
-};
-
-template<typename SubExpr, typename FieldType>
-struct ExprTypeCheck {
-    typename RefineFieldType<typename SubExpr::field_type, FieldType>::Result typedef Result;
+template<typename ExprType1, typename ExprType2>
+struct NewValueType {
+    typename CheckValueType<typename ExprType1::value_type, typename ExprType2::value_type>::result typedef result;
 };
 
 
-// Specific types
+// Specific locations
 
-struct SVol {
-    double typedef value_type;
-};
-
+struct SVol;
 
 // Constant expressions
 
 struct ConstExpr {
-    SingleValue<double> typedef field_type;
+    SingleValue typedef location;
+    double typedef value_type;
 
     const double value;
 
@@ -98,7 +97,7 @@ struct ConstExpr {
 
 // Fields
 
-template<typename FieldType>
+template<typename Location, typename ValueType>
 class Field {
     private:
         struct FieldMemory {
@@ -116,7 +115,8 @@ class Field {
         std::shared_ptr<FieldMemory> data;
 
     public:
-        FieldType typedef field_type;
+        Location typedef location;
+        ValueType typedef value_type;
 
         const Grid dim;
 
@@ -140,8 +140,8 @@ class Field {
 
 // Printing Fields to std::cout
 
-template<typename FieldType>
-std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
+template<typename Location, typename ValueType>
+std::ostream & operator<<(std::ostream & os, const Field<Location, ValueType> & field)
 {
     for (int z = 0; z < field.dim.z; z++) {
         os << "z = " << z << std::endl;
@@ -160,9 +160,10 @@ std::ostream & operator<<(std::ostream & os, const Field<FieldType> & field)
 
 // Assignments
 
-template<typename FieldType, typename Expr>
-void operator<<=(Field<FieldType> & field, const Expr & rhs) {
-    typename ExprTypeCheck<Expr, FieldType>::Result typedef check;
+template<typename Location, typename ValueType, typename Expr>
+void operator<<=(Field<Location, ValueType> & field, const Expr & rhs) {
+    typename NewLocation<Field<Location, ValueType>, Expr>::result typedef location_check;
+    typename NewValueType<Field<Location, ValueType>, Expr>::result typedef value_type_check;
 
     for (int k = 0; k <  field.dim.z; k++) {
         for (int j = 0; j < field.dim.y; j++) {
@@ -173,8 +174,8 @@ void operator<<=(Field<FieldType> & field, const Expr & rhs) {
     }
 }
 
-template<typename FieldType>
-void operator<<=(Field<FieldType> & field, const double rhs) {
+template<typename Location, typename ValueType>
+void operator<<=(Field<Location, ValueType> & field, const double rhs) {
     field <<= ConstExpr(rhs);
 }
 
@@ -189,7 +190,8 @@ class BinExpr {
         const Functor functor;
 
     public:
-        typename RefineFieldType<typename SubExpr1::field_type, typename SubExpr2::field_type>::Result typedef field_type;
+        typename NewLocation<SubExpr1, SubExpr2>::result typedef location;
+        typename NewValueType<SubExpr1, SubExpr2>::result typedef value_type;
 
         BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
             : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}

@@ -13,10 +13,10 @@ int main(int argc, const char *argv[])
     b <<= a + 1;
     std::cout << b;
 
-    Field<SVol> c(grid);
+    Field<SVol, double> c(grid);
     c <<= -2.0;
 
-    Field<SVol> d(grid);
+    Field<SVol, double> d(grid);
     d <<= c + b + 1;
     std::cout << d;
 

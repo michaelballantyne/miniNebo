@@ -1,12 +1,13 @@
 template<typename ValueType>
-class Field<SingleValue<ValueType> > {
+class Field<SingleValue, ValueType> {
     private:
         double value;
 
     public:
         const Grid dim;
 
-        SingleValue<ValueType> typedef field_type;
+        ValueType typedef value_type;
+        SingleValue typedef location;
 
         Field() : value(0), dim(1, 1, 1, 1) {}
         Field(double valueArg) : value(valueArg), dim(1, 1, 1, 1) {}
@@ -24,4 +25,4 @@ class Field<SingleValue<ValueType> > {
         }
 };
 
-Field<SingleValue<double> > typedef SingleValueField;
+Field<SingleValue, double> typedef SingleValueField;
