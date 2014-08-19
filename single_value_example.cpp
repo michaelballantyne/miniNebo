@@ -20,5 +20,7 @@ int main(int argc, const char *argv[])
     d <<= c + b + 1;
     std::cout << d;
 
+    double e = 5.5 + 1.4;
+
     return 0;
 }

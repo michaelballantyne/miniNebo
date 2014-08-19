@@ -100,19 +100,7 @@ struct ConstExpr {
 template<typename Location, typename ValueType>
 class Field {
     private:
-        struct FieldMemory {
-            double* array;
-
-            FieldMemory(const int x, const int y, const int z) {
-                array = new double[x * y * z];
-            }
-
-            ~FieldMemory() {
-                delete array;
-            }
-        };
-
-        std::shared_ptr<FieldMemory> data;
+        double* array;
 
     public:
         Location typedef location;
@@ -121,14 +109,21 @@ class Field {
         const Grid dim;
 
         Field(const Grid dimArg)
-            : dim(dimArg), data(new FieldMemory(dimArg.x, dimArg.y, dimArg.z)) {}
+            : dim(dimArg)
+        {
+            array = new double[dim.x * dim.y * dim.z];
+        }
+
+        ~Field() {
+            delete array;
+        }
 
         double & operator() (int x, int y, int z) {
-            return (*data).array[z * dim.y + y * dim.x + x];
+            return array[z * dim.y + y * dim.x + x];
         }
 
         double operator() (int x, int y, int z) const {
-            return (*data).array[z * dim.y + y * dim.x + x];
+            return array[z * dim.y + y * dim.x + x];
         }
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
@@ -137,6 +132,23 @@ class Field {
 
 };
 
+// Field reference
+
+template<typename FieldType>
+class FieldRef {
+    private:
+        const FieldType & field;
+
+    public:
+        typename FieldType::location typedef location;
+        typename FieldType::value_type typedef value_type;
+
+        FieldRef(const FieldType & fieldArg) : field(fieldArg) {}
+
+        double eval(int x, int y, int z, const Grid fieldDim) const {
+            return field.eval(x, y, z, fieldDim);
+        }
+};
 
 // Printing Fields to std::cout
 
@@ -212,6 +224,11 @@ const ConstExpr wrap(int valueArg) {
     return ConstExpr(valueArg);
 }
 
+template<typename Location, typename ValueType>
+const FieldRef<Field<Location, ValueType> > wrap(const Field<Location, ValueType> & arg) {
+    return FieldRef<Field<Location, ValueType> >(arg);
+}
+
 template<typename Expr>
 const Expr & wrap(const Expr & arg) {
     return arg;
@@ -222,17 +239,22 @@ const Expr & wrap(const Expr & arg) {
 
 template<typename Expr>
 struct WrapReturn {
-    Expr typedef Result;
+    Expr typedef result;
 };
 
 template<>
 struct WrapReturn<double> {
-    ConstExpr typedef Result;
+    ConstExpr typedef result;
+};
+
+template<typename Location, typename ValueType>
+struct WrapReturn<Field<Location, ValueType> > {
+    FieldRef<Field<Location, ValueType> > typedef result;
 };
 
 template<>
 struct WrapReturn<int> {
-    ConstExpr typedef Result;
+    ConstExpr typedef result;
 };
 
 
@@ -245,8 +267,8 @@ struct SumOp {
 };
 
 template<typename Arg1, typename Arg2>
-BinExpr<SumOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result> operator+(const Arg1 & arg1, const Arg2 & arg2) {
-    return BinExpr<SumOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result>(wrap(arg1), wrap(arg2));
+BinExpr<SumOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> operator+(const Arg1 & arg1, const Arg2 & arg2) {
+    return BinExpr<SumOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result>(wrap(arg1), wrap(arg2));
 }
 
 struct MultOp {
@@ -256,6 +278,6 @@ struct MultOp {
 };
 
 template<typename Arg1, typename Arg2>
-BinExpr<MultOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result> operator*(const Arg1 & arg1, const Arg2 & arg2) {
-    return BinExpr<MultOp, typename WrapReturn<Arg1>::Result, typename WrapReturn<Arg2>::Result>(wrap(arg1), wrap(arg2));
+BinExpr<MultOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> operator*(const Arg1 & arg1, const Arg2 & arg2) {
+    return BinExpr<MultOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result>(wrap(arg1), wrap(arg2));
 }
