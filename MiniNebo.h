@@ -29,34 +29,29 @@ struct Grid {
 
 struct SingleValue;
 
-// NewLocation metafunction
+// JoinLocation metafunction
 
 template<typename Location1, typename Location2>
-struct RefineLocation;
+struct JoinLocation;
 
 template<typename Location>
-struct RefineLocation<Location, Location> {
+struct JoinLocation<Location, Location> {
     Location typedef result;
 };
 
 template<>
-struct RefineLocation<SingleValue, SingleValue> {
+struct JoinLocation<SingleValue, SingleValue> {
     SingleValue typedef result;
 };
 
 template<typename OtherLocation>
-struct RefineLocation<SingleValue, OtherLocation> {
+struct JoinLocation<SingleValue, OtherLocation> {
     OtherLocation typedef result;
 };
 
 template<typename OtherLocation>
-struct RefineLocation<OtherLocation, SingleValue> {
+struct JoinLocation<OtherLocation, SingleValue> {
     OtherLocation typedef result;
-};
-
-template<typename ExprType1, typename ExprType2>
-struct NewLocation {
-    typename RefineLocation<typename ExprType1::location, typename ExprType2::location>::result typedef result;
 };
 
 // CheckEqual metafunction
@@ -68,12 +63,6 @@ template<typename Type>
 struct CheckEqual<Type, Type> {
     Type typedef result;
 };
-
-template<typename ExprType1, typename ExprType2>
-struct NewValueType {
-    typename CheckEqual<typename ExprType1::value_type, typename ExprType2::value_type>::result typedef result;
-};
-
 
 // Specific locations
 
@@ -174,8 +163,10 @@ std::ostream & operator<<(std::ostream & os, const Field<Location, ValueType> & 
 
 template<typename Location, typename ValueType, typename Expr>
 void operator<<=(Field<Location, ValueType> & field, const Expr & rhs) {
-    typename NewLocation<Field<Location, ValueType>, Expr>::result typedef location_check;
-    typename NewValueType<Field<Location, ValueType>, Expr>::result typedef value_type_check;
+    typename CheckEqual<typename JoinLocation<Location,
+                                              typename Expr::location>::result,
+                        Location>::result typedef location_check;
+    typename CheckEqual<ValueType, typename Expr::value_type>::result typedef value_type_check;
 
     for (int k = 0; k <  field.dim.z; k++) {
         for (int j = 0; j < field.dim.y; j++) {
@@ -202,8 +193,8 @@ class BinExpr {
         const Functor functor;
 
     public:
-        typename NewLocation<SubExpr1, SubExpr2>::result typedef location;
-        typename NewValueType<SubExpr1, SubExpr2>::result typedef value_type;
+        typename JoinLocation<typename SubExpr1::location, typename SubExpr2::location>::result typedef location;
+        typename CheckEqual<typename SubExpr1::value_type, typename SubExpr2::value_type>::result typedef value_type;
 
         BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
             : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}

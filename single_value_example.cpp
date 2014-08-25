@@ -22,5 +22,8 @@ int main(int argc, const char *argv[])
 
     double e = 5.5 + 1.4;
 
+    // This should fail to compile; the assignment would lose information.
+    // b <<= c;
+
     return 0;
 }
