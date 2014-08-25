@@ -1,7 +1,7 @@
 // Reduction function
 
-template<typename Reduction, typename Location, typename ValueType>
-double reduce(const Field<Location, ValueType> & field) {
+template<typename Reduction, typename FieldType>
+double reduce(const FieldType & field) {
     Reduction reduction;
 
     double acc = reduction.initial;

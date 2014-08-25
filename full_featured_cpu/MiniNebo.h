@@ -161,12 +161,12 @@ std::ostream & operator<<(std::ostream & os, const Field<Location, ValueType> & 
 
 // Assignments
 
-template<typename Location, typename ValueType, typename Expr>
-void operator<<=(Field<Location, ValueType> & field, const Expr & rhs) {
-    typename CheckEqual<typename JoinLocation<Location,
+template<typename FieldType, typename Expr>
+void operator<<=(FieldType & field, const Expr & rhs) {
+    typename CheckEqual<typename JoinLocation<typename FieldType::location,
                                               typename Expr::location>::result,
-                        Location>::result typedef location_check;
-    typename CheckEqual<ValueType, typename Expr::value_type>::result typedef value_type_check;
+                        typename FieldType::location>::result typedef location_check;
+    typename CheckEqual<typename FieldType::value_type, typename Expr::value_type>::result typedef value_type_check;
 
     for (int k = 0; k <  field.dim.z; k++) {
         for (int j = 0; j < field.dim.y; j++) {
@@ -177,8 +177,8 @@ void operator<<=(Field<Location, ValueType> & field, const Expr & rhs) {
     }
 }
 
-template<typename Location, typename ValueType>
-void operator<<=(Field<Location, ValueType> & field, const double rhs) {
+template<typename FieldType>
+void operator<<=(FieldType & field, const double rhs) {
     field <<= ConstExpr(rhs);
 }
 
