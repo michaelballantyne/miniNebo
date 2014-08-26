@@ -86,8 +86,8 @@ const ConstExpr wrap(int valueArg) {
 }
 
 template<typename Location>
-const FieldExpr<Initial, TypedField<Location> > wrap(const TypedField<Location> & arg) {
-    return FieldExpr<Initial, TypedField<Location> >(arg);
+const FieldExpr<TypedField<Location> > wrap(const TypedField<Location> & arg) {
+    return FieldExpr<TypedField<Location> >(arg);
 }
 
 template<typename Location, typename ExprType>
@@ -99,7 +99,7 @@ const ExprType & wrap(const TypedExpr<Location, ExprType> & arg) {
 
 template<typename FieldType>
 struct WrapReturn {
-    FieldExpr<Initial, FieldType> typedef result;
+    FieldExpr<FieldType> typedef result;
 };
 
 template<typename Location, typename ExprType>
@@ -131,7 +131,7 @@ void operator<<=(FieldType & field, const TypedExpr & rhs) {
 
 template<typename Op, typename Arg1, typename Arg2>
 struct BinExprType {
-    BinExpr<Initial, Op, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> typedef result;
+    BinExpr<Op, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> typedef result;
 };
 
 template<typename Op, typename Arg1, typename Arg2>

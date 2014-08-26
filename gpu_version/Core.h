@@ -11,27 +11,16 @@
 #define __common__
 #endif
 
-// Modes
-
-struct Initial;
-struct GPU;
-struct CPU;
-
-struct Eval;
-
 // Field expressions
 
-template<typename Mode, typename FieldType>
-struct FieldExpr;
-
 template<typename FieldType>
-class FieldExpr<Eval, FieldType> {
+class FieldExprEval {
     private:
         double* array;
 
     public:
         Dimensions dim;
-        FieldExpr(double* arrayArg, Dimensions dimArg) : array(arrayArg), dim(dimArg) {}
+        FieldExprEval(double* arrayArg, Dimensions dimArg) : array(arrayArg), dim(dimArg) {}
 
         __common__ double eval(int x, int y, int z) const {
             return array[z * dim.y + y * dim.x + x];
@@ -39,13 +28,13 @@ class FieldExpr<Eval, FieldType> {
 };
 
 template<typename FieldType>
-class FieldExpr<Initial, FieldType> {
+class FieldExpr {
     private:
         const FieldType & field;
 
     public:
-        FieldExpr<Eval, FieldType> typedef CPUType;
-        FieldExpr<Eval, FieldType> typedef GPUType;
+        FieldExprEval<FieldType> typedef CPUType;
+        FieldExprEval<FieldType> typedef GPUType;
 
         FieldExpr(const FieldType & fieldArg) : field(fieldArg) {}
 
@@ -103,18 +92,31 @@ struct ConstExpr {
 
 // Binary expressions
 
-template<typename Mode, typename Functor, typename SubExpr1, typename SubExpr2>
-class BinExpr;
+template<typename Functor, typename SubExpr1, typename SubExpr2>
+class BinExprEval {
+    private:
+        const SubExpr1 subExpr1;
+        const SubExpr2 subExpr2;
+        const Functor functor;
+
+    public:
+        BinExprEval(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
+            : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}
+
+        __common__ double eval(int x, int y, int z) const {
+            return functor(subExpr1.eval(x, y, z), subExpr2.eval(x, y, z));
+        }
+};
 
 template<typename Functor, typename SubExpr1, typename SubExpr2>
-class BinExpr<Initial, Functor, SubExpr1, SubExpr2> {
+class BinExpr {
     private:
         const SubExpr1 subExpr1;
         const SubExpr2 subExpr2;
 
     public:
-        BinExpr<Eval, Functor, typename SubExpr1::CPUType, typename SubExpr2::CPUType> typedef CPUType;
-        BinExpr<Eval, Functor, typename SubExpr1::GPUType, typename SubExpr2::GPUType> typedef GPUType;
+        BinExprEval<Functor, typename SubExpr1::CPUType, typename SubExpr2::CPUType> typedef CPUType;
+        BinExprEval<Functor, typename SubExpr1::GPUType, typename SubExpr2::GPUType> typedef GPUType;
 
         BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
             : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg) {}
@@ -138,28 +140,12 @@ class BinExpr<Initial, Functor, SubExpr1, SubExpr2> {
         #endif
 };
 
-template<typename Functor, typename SubExpr1, typename SubExpr2>
-class BinExpr<Eval, Functor, SubExpr1, SubExpr2> {
-    private:
-        const SubExpr1 subExpr1;
-        const SubExpr2 subExpr2;
-        const Functor functor;
-
-    public:
-        BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
-            : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}
-
-        __common__ double eval(int x, int y, int z) const {
-            return functor(subExpr1.eval(x, y, z), subExpr2.eval(x, y, z));
-        }
-};
-
 // Printing Fields to std::cout
 
 template<typename FieldType>
 std::ostream & core_write_field(std::ostream & os, FieldType & field)
 {
-    typename FieldExpr<Initial, FieldType>::CPUType expr = FieldExpr<Initial, FieldType>(field).cpu_init();
+    typename FieldExpr<FieldType>::CPUType expr = FieldExpr<FieldType>(field).cpu_init();
     for (int z = 0; z < expr.dim.z; z++) {
         os << "z = " << z << std::endl;
         for (int y = 0; y < expr.dim.y; y++) {
