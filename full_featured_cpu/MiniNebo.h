@@ -185,22 +185,22 @@ void operator<<=(FieldType & field, const double rhs) {
 
 // Binary expressions
 
-template<typename Functor, typename SubExpr1, typename SubExpr2>
+template<typename Op, typename SubExpr1, typename SubExpr2>
 class BinExpr {
     private:
         const SubExpr1 subExpr1;
         const SubExpr2 subExpr2;
-        const Functor functor;
+        const Op op;
 
     public:
         typename JoinLocation<typename SubExpr1::location, typename SubExpr2::location>::result typedef location;
         typename CheckEqual<typename SubExpr1::value_type, typename SubExpr2::value_type>::result typedef value_type;
 
         BinExpr(const SubExpr1 & subExpr1Arg, const SubExpr2 & subExpr2Arg)
-            : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), functor() {}
+            : subExpr1(subExpr1Arg), subExpr2(subExpr2Arg), op() {}
 
         double eval(int x, int y, int z, const Grid fieldDim) const {
-            return functor(subExpr1.eval(x, y, z, fieldDim), subExpr2.eval(x, y, z, fieldDim));
+            return op(subExpr1.eval(x, y, z, fieldDim), subExpr2.eval(x, y, z, fieldDim));
         }
 };
 
