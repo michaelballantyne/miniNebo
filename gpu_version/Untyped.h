@@ -57,13 +57,26 @@ void operator<<=(Field & field, const Expr & rhs) {
 // Interface functions
 
 template<typename Arg1, typename Arg2>
-BinExpr<SumOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> operator+(const Arg1 & arg1, const Arg2 & arg2) {
-    return BinExpr<SumOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result>(wrap(arg1), wrap(arg2));
-}
+BinExpr<SumOp,
+        typename WrapReturn<Arg1>::result,
+        typename WrapReturn<Arg2>::result>
+operator+(const Arg1 & arg1, const Arg2 & arg2) {
+    BinExpr<SumOp,
+            typename WrapReturn<Arg1>::result,
+            typename WrapReturn<Arg2>::result> typedef ReturnType;
 
-// Interface functions
+    return ReturnType(wrap(arg1), wrap(arg2));
+}
 
 template<typename Arg1, typename Arg2>
-BinExpr<MultOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result> operator*(const Arg1 & arg1, const Arg2 & arg2) {
-    return BinExpr<MultOp, typename WrapReturn<Arg1>::result, typename WrapReturn<Arg2>::result>(wrap(arg1), wrap(arg2));
+BinExpr<MultOp,
+        typename WrapReturn<Arg1>::result,
+        typename WrapReturn<Arg2>::result>
+operator*(const Arg1 & arg1, const Arg2 & arg2) {
+    BinExpr<MultOp,
+            typename WrapReturn<Arg1>::result,
+            typename WrapReturn<Arg2>::result> typedef ReturnType;
+
+    return ReturnType(wrap(arg1), wrap(arg2));
 }
+
