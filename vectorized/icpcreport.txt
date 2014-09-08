@@ -1,0 +1,7 @@
+Core.h(76): (col. 13) remark: LOOP WAS VECTORIZED
+Core.h(75): (col. 9) remark: loop was not vectorized: not inner loop
+Core.h(74): (col. 5) remark: loop was not vectorized: not inner loop
+Core.h(76): (col. 13) remark: LOOP WAS VECTORIZED
+Core.h(75): (col. 9) remark: loop was not vectorized: not inner loop
+Core.h(74): (col. 5) remark: loop was not vectorized: not inner loop
+typed_test.cpp(16): (col. 5) remark: loop was not vectorized: not inner loop

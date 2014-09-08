@@ -1,0 +1,401 @@
+icpc: command line warning #10128: invalid value 'vec' for '-opt-report-phase'; ignoring
+
+<;-1:-1;IPO ROUTINE ATTRIBUTES PROPAGATION;;0>
+  ROUTINE ATTRIBUTE PROPAGATION TOTALS: 
+
+      RDECL: NSE(0->0) AR(0->0) NORET(0->0) DR(0->0) NT(0->0)
+      RDECL: MF(0->0) OMPPAR(0->0)
+      ENTRY: SE(0->0) DSE(0->0) IR(0->0) DIR(0->0) AR(0->0)
+      ENTRY: MX(0->0) DR(0->0) DDR(0->0) TRIV(0->0) DTRIV(0->0)
+      ENTRY: NT(0->0) DNT(0->0) MF(0->0) DMF(0->0) NDR(0->0)
+      ENTRY: DNDR(0->0) INLOOP(0->0) INASYNCHTRY(0->0)
+      ENTRY: LOCTHIS(0->0) OMPPAR(0->0)
+
+
+
+<;-1:-1;IPO ROUTINE ATTRIBUTES LATE PROPAGATION;;0>
+  ROUTINE ATTRIBUTE LATE PROPAGATION TOTALS: 
+
+      ENTRY: CP(0->0)
+
+
+
+<;-1:-1;IPO MODREF;;0>
+  CI-MOD: TOTAL(29):EMPTY(9)BOTTOM(4)OTHER(16)
+
+  CI-REF: TOTAL(29):OTHER(29)
+
+
+<;-1:-1;IPO;;0>
+WHOLE PROGRAM (SAFE) [EITHER METHOD]: false
+
+WHOLE PROGRAM (SEEN) [TABLE METHOD]: true
+
+WHOLE PROGRAM (READ) [OBJECT READER METHOD]: false
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: 10000
+  -inline-max-per-compile: 500000
+
+
+<typed_test.cpp;6:20;IPO INLINING;main;0>
+INLINING REPORT: (main) [1/29=3.4%]
+
+  -> INLINE (MANUAL): _ZN10TypedFieldI4SVolED1Ev(43) (isz = 5) (sz = 10 (6+4))
+    -> _ZdlPv(EXTERN)
+  -> INLINE (MANUAL): _ZN10TypedFieldI4SVolED1Ev(44) (isz = 5) (sz = 10 (6+4))
+    -> _ZdlPv(EXTERN)
+  -> INLINE (MANUAL): _ZmlI10TypedFieldI4SVolEdEN13BinExprReturnI6MultOpT_T0_E6resultERKS5_RKS6_(45) (isz = 54) (sz = 63 (27+36))
+    -> INLINE (MANUAL): _Z7binExprI6MultOp10TypedFieldI4SVolEdEN13BinExprReturnIT_T0_T1_E6resultERKS6_RKS7_(84) (isz = 53) (sz = 62 (27+35))
+      -> INLINE (MANUAL): _Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_(89) (isz = 11) (sz = 18 (7+11))
+        -> INLINE (MANUAL): _ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_(90) (isz = 9) (sz = 16 (7+9))
+          -> INLINE (MANUAL): _ZNK10TypedFieldI4SVolE8get_dataEv(91) (isz = 0) (sz = 6 (2+4))
+      -> memcpy(EXTERN)
+      -> INLINE: _Z4wrapd(87) (isz = 2) (sz = 9 (3+6))
+        -> INLINE (MANUAL): _ZN9ConstExprC1Ed(88) (isz = 0) (sz = 6 (3+3))
+      -> INLINE (MANUAL): _ZN7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprEC1ERKS5_RKS6_(86) (isz = 8) (sz = 17 (10+7))
+      -> INLINE (MANUAL): _ZN9TypedExprI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEEC1ERKS8_(85) (isz = 9) (sz = 16 (12+4))
+  -> INLINE (MANUAL): _ZplI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI6MultOp9FieldExprIS2_E9ConstExprEEEN13BinExprReturnI5SumOpT_T0_E6resultERKSD_RKSE_(46) (isz = 57) (sz = 66 (26+40))
+    -> INLINE (MANUAL): _Z7binExprI5SumOp10TypedFieldI4SVolE9TypedExprIS2_7BinExprI6MultOp9FieldExprIS3_E9ConstExprEEEN13BinExprReturnIT_T0_T1_E6resultERKSE_RKSF_(99) (isz = 56) (sz = 65 (26+39))
+      -> INLINE (MANUAL): _Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_(103) (isz = 11) (sz = 18 (7+11))
+        -> INLINE (MANUAL): _ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_(104) (isz = 9) (sz = 16 (7+9))
+          -> INLINE (MANUAL): _ZNK10TypedFieldI4SVolE8get_dataEv(105) (isz = 0) (sz = 6 (2+4))
+      -> memcpy(EXTERN)
+      -> INLINE (MANUAL): _Z4wrapI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEERKT0_RK9TypedExprIT_S9_E(102) (isz = 1) (sz = 7 (2+5))
+      -> INLINE (MANUAL): _ZN7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEEC1ERKS5_RKS8_(101) (isz = 16) (sz = 25 (18+7))
+      -> INLINE (MANUAL): _ZN9TypedExprI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEEC1ERKSA_(100) (isz = 7) (sz = 14 (3+11))
+  -> INLINE (MANUAL): _ZlSI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI5SumOp9FieldExprIS2_ES4_I6MultOpS7_9ConstExprEEEEvRT_RKT0_(49) (isz = 72) (sz = 79 (21+58))
+    -> INLINE (MANUAL): _Z4wrapI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEERKT0_RK9TypedExprIT_SB_E(50) (isz = 1) (sz = 7 (2+5))
+    -> INLINE (MANUAL): _Z11core_assignI10TypedFieldI4SVolE7BinExprI5SumOp9FieldExprIS2_ES3_I6MultOpS6_9ConstExprEEEvRT_RKT0_(115) (isz = 68) (sz = 75 (20+55))
+      -> INLINE (MANUAL): _ZNK10TypedFieldI4SVolE8get_dataEv(123) (isz = 0) (sz = 6 (2+4))
+      -> INLINE (MANUAL): _ZNK7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEE4evalEi(116) (isz = 36) (sz = 45 (7+38))
+        -> INLINE (MANUAL): _ZNK5SumOpclEdd(122) (isz = 0) (sz = 8 (2+6))
+        -> INLINE (MANUAL): _ZNK7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprE4evalEi(118) (isz = 18) (sz = 27 (5+22))
+          -> INLINE (MANUAL): _ZNK6MultOpclEdd(121) (isz = 0) (sz = 8 (2+6))
+          -> INLINE (MANUAL): _ZNK9ConstExpr4evalEi(120) (isz = 0) (sz = 7 (2+5))
+          -> INLINE (MANUAL): _ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi(119) (isz = 2) (sz = 10 (2+8))
+        -> INLINE (MANUAL): _ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi(117) (isz = 2) (sz = 10 (2+8))
+  -> _ZN10TypedFieldI4SVolED1Ev(16) (isz = 5) (sz = 10 (6+4))
+  -> _ZN10TypedFieldI4SVolED1Ev(16) (isz = 5) (sz = 10 (6+4))
+  -> INLINE (MANUAL): _ZN10TypedFieldI4SVolEC1E10Dimensions(62) (isz = 14) (sz = 21 (7+14))
+    -> _Znam(EXTERN)
+  -> INLINE (MANUAL): _ZN10DimensionsC1Eiii(51) (isz = 2) (sz = 12 (5+7))
+  -> INLINE (MANUAL): _ZN10TypedFieldI4SVolEC1E10Dimensions(63) (isz = 14) (sz = 21 (7+14))
+    -> _Znam(EXTERN)
+  -> INLINE (MANUAL): _ZN10DimensionsC1Eiii(52) (isz = 2) (sz = 12 (5+7))
+
+
+<typed_test.cpp;6:20;IPO FORWARD SUBSTITUTION;main;0>
+  SUBSTITUTION: TOTAL(229):REPLACE(152)REMOVE(64)ADDR-TAKEN-OFF(13)
+
+
+HPO VECTORIZER REPORT (main) LOG OPENED ON Mon Sep  8 14:29:23 2014
+
+
+<typed_test.cpp;-1:-1;hpo_vectorization;main;0>
+HPO Vectorizer Report (main)
+
+Core.h(75:5-75:5):VEC:main:  LOOP WAS VECTORIZED
+loop skipped: multiversioned
+typed_test.cpp(10:5-10:5):VEC:main:  loop was not vectorized: not inner loop
+
+HLO REPORT LOG OPENED ON Mon Sep  8 14:29:23 2014
+
+
+<typed_test.cpp;-1:-1;hlo;main;0>
+High Level Optimizer Report (main)
+
+Loop dual-path report:
+
+<Core.h;75:75;hlo;main;0>
+Loop at 75 -- selected for multiversion - DD
+
+Block, Unroll, Jam Report:
+(loop line numbers, unroll factors and type of transformation)
+
+<Core.h;75:75;hlo_unroll;main;0>
+Loop at line 75(rt-dd-ver 2) unrolled with remainder by 2   
+Typed.h(148:37-148:37):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+Typed.h(148:37-148:37):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+Core.h(47:24-47:24):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+Typed.h(148:37-148:37):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+Typed.h(148:37-148:37):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+Core.h(47:24-47:24):CG:main:  call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (16, 0)
+
+<Field.h;31:33;IPO INLINING;_ZN10TypedFieldI4SVolED1Ev;0>
+INLINING REPORT: (_ZN10TypedFieldI4SVolED1Ev) [2/29=6.9%]
+
+  -> _ZdlPv(EXTERN)
+
+
+<Typed.h;80:81;IPO INLINING;_Z4wrapd;0>
+INLINING REPORT: (_Z4wrapd) [3/29=10.3%]
+
+  -> INLINE (MANUAL): _ZN9ConstExprC1Ed(31) (isz = 0) (sz = 6 (3+3))
+
+
+<Typed.h;80:81;IPO FORWARD SUBSTITUTION;_Z4wrapd;0>
+  SUBSTITUTION: TOTAL(6):REPLACE(3)REMOVE(2)ADDR-TAKEN-OFF(1)
+
+
+<Typed.h;84:85;IPO INLINING;_Z4wrapi;0>
+INLINING REPORT: (_Z4wrapi) [4/29=13.8%]
+
+  -> INLINE (MANUAL): _ZN9ConstExprC1Ed(30) (isz = 0) (sz = 6 (3+3))
+
+
+<Typed.h;84:85;IPO FORWARD SUBSTITUTION;_Z4wrapi;0>
+  SUBSTITUTION: TOTAL(6):REPLACE(3)REMOVE(2)ADDR-TAKEN-OFF(1)
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZmlI10TypedFieldI4SVolEdEN13BinExprReturnI6MultOpT_T0_E6resultERKS5_RKS6_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZmlI10TypedFieldI4SVolEdEN13BinExprReturnI6MultOpT_T0_E6resultERKS5_RKS6_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZplI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI6MultOp9FieldExprIS2_E9ConstExprEEEN13BinExprReturnI5SumOpT_T0_E6resultERKSD_RKSE_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZplI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI6MultOp9FieldExprIS2_E9ConstExprEEEN13BinExprReturnI5SumOpT_T0_E6resultERKSD_RKSE_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZlSI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI5SumOp9FieldExprIS2_ES4_I6MultOpS7_9ConstExprEEEEvRT_RKT0_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZlSI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI5SumOp9FieldExprIS2_ES4_I6MultOpS7_9ConstExprEEEEvRT_RKT0_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z7binExprI6MultOp10TypedFieldI4SVolEdEN13BinExprReturnIT_T0_T1_E6resultERKS6_RKS7_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z7binExprI6MultOp10TypedFieldI4SVolEdEN13BinExprReturnIT_T0_T1_E6resultERKS6_RKS7_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z7binExprI5SumOp10TypedFieldI4SVolE9TypedExprIS2_7BinExprI6MultOp9FieldExprIS3_E9ConstExprEEEN13BinExprReturnIT_T0_T1_E6resultERKSE_RKSF_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z7binExprI5SumOp10TypedFieldI4SVolE9TypedExprIS2_7BinExprI6MultOp9FieldExprIS3_E9ConstExprEEEN13BinExprReturnIT_T0_T1_E6resultERKSE_RKSF_)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z4wrapI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEERKT0_RK9TypedExprIT_S9_E;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z4wrapI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEERKT0_RK9TypedExprIT_S9_E)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z4wrapI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEERKT0_RK9TypedExprIT_SB_E;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z4wrapI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEERKT0_RK9TypedExprIT_SB_E)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_Z11core_assignI10TypedFieldI4SVolE7BinExprI5SumOp9FieldExprIS2_ES3_I6MultOpS6_9ConstExprEEEvRT_RKT0_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_Z11core_assignI10TypedFieldI4SVolE7BinExprI5SumOp9FieldExprIS2_ES3_I6MultOpS6_9ConstExprEEEvRT_RKT0_)
+  Routine is dead extern
+
+
+<Field.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN10DimensionsC1Eiii;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN10DimensionsC1Eiii)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN9ConstExprC1Ed;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN9ConstExprC1Ed)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK9ConstExpr4evalEi;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK9ConstExpr4evalEi)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK5SumOpclEdd;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK5SumOpclEdd)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK6MultOpclEdd;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK6MultOpclEdd)
+  Routine is dead extern
+
+
+<Field.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN10TypedFieldI4SVolEC1E10Dimensions;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN10TypedFieldI4SVolEC1E10Dimensions)
+  Routine is dead extern
+
+
+<Field.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK10TypedFieldI4SVolE8get_dataEv;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK10TypedFieldI4SVolE8get_dataEv)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprEC1ERKS5_RKS6_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprEC1ERKS5_RKS6_)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprE4evalEi;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprE4evalEi)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN9TypedExprI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEEC1ERKS8_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN9TypedExprI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEEC1ERKS8_)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEEC1ERKS5_RKS8_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEEC1ERKS5_RKS8_)
+  Routine is dead extern
+
+
+<Core.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZNK7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEE4evalEi;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZNK7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEE4evalEi)
+  Routine is dead extern
+
+
+<Typed.h;-1:-1;IPO DEAD STATIC FUNCTION ELIMINATION;_ZN9TypedExprI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEEC1ERKSA_;0>
+DEAD STATIC FUNCTION ELIMINATION: 
+  (_ZN9TypedExprI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEEC1ERKSA_)
+  Routine is dead extern
+
+
+<;72:72;IPO INLINING;__sti__$E;0>
+INLINING REPORT: (__sti__$E) [29/29=100.0%]
+
+  -> __cxa_atexit(EXTERN)
+  -> _ZNSt8ios_base4InitC1Ev(EXTERN)
+
+
+<;-1:-1;PGO;__sti__$E;0>
+  STATIC:                __sti__$E
+
+<Typed.h;-1:-1;PGO;_ZN9TypedExprI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEEC1ERKSA_;0>
+  STATIC:Typed.h         _ZN9TypedExprI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEEC1ERKSA_
+
+<Core.h;-1:-1;PGO;_ZNK7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEE4evalEi;0>
+  STATIC:Core.h          _ZNK7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEE4evalEi
+
+<Core.h;-1:-1;PGO;_ZN7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEEC1ERKS5_RKS8_;0>
+  STATIC:Core.h          _ZN7BinExprI5SumOp9FieldExprI10TypedFieldI4SVolEES_I6MultOpS5_9ConstExprEEC1ERKS5_RKS8_
+
+<Typed.h;-1:-1;PGO;_ZN9TypedExprI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEEC1ERKS8_;0>
+  STATIC:Typed.h         _ZN9TypedExprI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEEC1ERKS8_
+
+<Core.h;-1:-1;PGO;_ZNK7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprE4evalEi;0>
+  STATIC:Core.h          _ZNK7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprE4evalEi
+
+<Core.h;-1:-1;PGO;_ZN7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprEC1ERKS5_RKS6_;0>
+  STATIC:Core.h          _ZN7BinExprI6MultOp9FieldExprI10TypedFieldI4SVolEE9ConstExprEC1ERKS5_RKS6_
+
+<Core.h;-1:-1;PGO;_ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi;0>
+  STATIC:Core.h          _ZNK9FieldExprI10TypedFieldI4SVolEE4evalEi
+
+<Core.h;-1:-1;PGO;_ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_;0>
+  STATIC:Core.h          _ZN9FieldExprI10TypedFieldI4SVolEEC1ERKS2_
+
+<Field.h;-1:-1;PGO;_ZNK10TypedFieldI4SVolE8get_dataEv;0>
+  STATIC:Field.h         _ZNK10TypedFieldI4SVolE8get_dataEv
+
+<Field.h;-1:-1;PGO;_ZN10TypedFieldI4SVolED1Ev;0>
+  STATIC:Field.h         _ZN10TypedFieldI4SVolED1Ev
+
+<Field.h;-1:-1;PGO;_ZN10TypedFieldI4SVolEC1E10Dimensions;0>
+  STATIC:Field.h         _ZN10TypedFieldI4SVolEC1E10Dimensions
+
+<Core.h;-1:-1;PGO;_ZNK6MultOpclEdd;0>
+  STATIC:Core.h          _ZNK6MultOpclEdd
+
+<Core.h;-1:-1;PGO;_ZNK5SumOpclEdd;0>
+  STATIC:Core.h          _ZNK5SumOpclEdd
+
+<Core.h;-1:-1;PGO;_ZNK9ConstExpr4evalEi;0>
+  STATIC:Core.h          _ZNK9ConstExpr4evalEi
+
+<Core.h;-1:-1;PGO;_ZN9ConstExprC1Ed;0>
+  STATIC:Core.h          _ZN9ConstExprC1Ed
+
+<Field.h;-1:-1;PGO;_ZN10DimensionsC1Eiii;0>
+  STATIC:Field.h         _ZN10DimensionsC1Eiii
+
+<Core.h;-1:-1;PGO;_Z11core_assignI10TypedFieldI4SVolE7BinExprI5SumOp9FieldExprIS2_ES3_I6MultOpS6_9ConstExprEEEvRT_RKT0_;0>
+  STATIC:Core.h          _Z11core_assignI10TypedFieldI4SVolE7BinExprI5SumOp9FieldExprIS2_ES3_I6MultOpS6_9ConstExprEEEvRT_RKT0_
+
+<Typed.h;-1:-1;PGO;_Z4wrapI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEERKT0_RK9TypedExprIT_SB_E;0>
+  STATIC:Typed.h         _Z4wrapI4SVol7BinExprI5SumOp9FieldExprI10TypedFieldIS0_EES1_I6MultOpS6_9ConstExprEEERKT0_RK9TypedExprIT_SB_E
+
+<Typed.h;-1:-1;PGO;_Z4wrapI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEERKT0_RK9TypedExprIT_S9_E;0>
+  STATIC:Typed.h         _Z4wrapI4SVol7BinExprI6MultOp9FieldExprI10TypedFieldIS0_EE9ConstExprEERKT0_RK9TypedExprIT_S9_E
+
+<Typed.h;-1:-1;PGO;_Z7binExprI5SumOp10TypedFieldI4SVolE9TypedExprIS2_7BinExprI6MultOp9FieldExprIS3_E9ConstExprEEEN13BinExprReturnIT_T0_T1_E6resultERKSE_RKSF_;0>
+  STATIC:Typed.h         _Z7binExprI5SumOp10TypedFieldI4SVolE9TypedExprIS2_7BinExprI6MultOp9FieldExprIS3_E9ConstExprEEEN13BinExprReturnIT_T0_T1_E6resultERKSE_RKSF_
+
+<Typed.h;-1:-1;PGO;_Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_;0>
+  STATIC:Typed.h         _Z4wrapI4SVolEK9FieldExprI10TypedFieldIT_EERKS4_
+
+<Typed.h;-1:-1;PGO;_Z7binExprI6MultOp10TypedFieldI4SVolEdEN13BinExprReturnIT_T0_T1_E6resultERKS6_RKS7_;0>
+  STATIC:Typed.h         _Z7binExprI6MultOp10TypedFieldI4SVolEdEN13BinExprReturnIT_T0_T1_E6resultERKS6_RKS7_
+
+<Typed.h;-1:-1;PGO;_ZlSI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI5SumOp9FieldExprIS2_ES4_I6MultOpS7_9ConstExprEEEEvRT_RKT0_;0>
+  STATIC:Typed.h         _ZlSI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI5SumOp9FieldExprIS2_ES4_I6MultOpS7_9ConstExprEEEEvRT_RKT0_
+
+<Typed.h;-1:-1;PGO;_ZplI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI6MultOp9FieldExprIS2_E9ConstExprEEEN13BinExprReturnI5SumOpT_T0_E6resultERKSD_RKSE_;0>
+  STATIC:Typed.h         _ZplI10TypedFieldI4SVolE9TypedExprIS1_7BinExprI6MultOp9FieldExprIS2_E9ConstExprEEEN13BinExprReturnI5SumOpT_T0_E6resultERKSD_RKSE_
+
+<Typed.h;-1:-1;PGO;_ZmlI10TypedFieldI4SVolEdEN13BinExprReturnI6MultOpT_T0_E6resultERKS5_RKS6_;0>
+  STATIC:Typed.h         _ZmlI10TypedFieldI4SVolEdEN13BinExprReturnI6MultOpT_T0_E6resultERKS5_RKS6_
+
+<typed_test.cpp;-1:-1;PGO;main;0>
+  STATIC:typed_test.cpp  main
+
+<Typed.h;-1:-1;PGO;_Z4wrapi;0>
+  STATIC:Typed.h         _Z4wrapi
+
+<Typed.h;-1:-1;PGO;_Z4wrapd;0>
+  STATIC:Typed.h         _Z4wrapd
+
+<;-1:-1;PGO;;0>
+
+     29 FUNCTIONS HAD VALID STATIC PROFILES
+
+  IPO CURRENT  QUALITY METRIC:  50.0%
+  IPO POSSIBLE QUALITY METRIC:  50.0%
+  IPO QUALITY  METRIC RATIO:   100.0%
+
+
