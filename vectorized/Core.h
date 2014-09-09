@@ -73,6 +73,7 @@ void core_assign(FieldType & field, const Expr & expr) {
 
     for (int z = 0; z < field.dim.z; z++) {
         for (int y = 0; y < field.dim.y; y++) {
+            #pragma simd
             for (int x = 0; x < field.dim.x; x++) {
                 data[z * field.dim.y * field.dim.x + y * field.dim.x + x] = expr.eval(x, y, z);
             }
@@ -81,7 +82,6 @@ void core_assign(FieldType & field, const Expr & expr) {
 }
 
 
-#pragma optimization_level 0
 template<typename FieldType>
 std::ostream & core_write_field(std::ostream & os, const FieldType & field)
 {
